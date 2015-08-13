@@ -7,28 +7,37 @@
 使用方法
 -------
 
+		include_once('sql_join.php');
+	
 		$where=array(
-			'select'=>array('zx','z','x'),
-			'from'=>'aa',
+			'limit'=>array('1,2','DESC'),
+			'from'=>'havana_profile',
 			'where'=>array(
-				'and'=>array('4','=',"'select'"),
-				array('5','like','%3%'),
-				'or'=>array('6','>','7')
+				array('name','like','\'%m%\''),
+				'or'=>array('id','>','76')
 				),
 			'order'=>array('id','DESC'),
-			'limit'=>'1,2'
+			'select'=>array('id','name','phone','udate'),
+			'left'=>array('aa',array('id','=','uid'))
 		);
 		
 		$sql =new SQL_Join();    
-		echo $sql->sqlCheck($where);            //获取SQL语句
+    	echo $sql->getSQL($where);   
 		
+已实现
+------
+1.关键字识别
+
+1.简单排序
 		
+		$sql->getSQL($where,TRUE)
+	
 已知问题
 --------
 
 如果字符串中出现多个 `'` 或 `"` 那么会把外面的字符都变成小写，
 
-未实现自动排序拼接
+未实现排序深度控制
 
 
 更新时间

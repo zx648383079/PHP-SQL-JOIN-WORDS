@@ -6,6 +6,10 @@
 */
 class SQL_Join{
 	
+	/********
+	SQL中的关键字数组
+	*********/
+	const SQL_KEYS=array(/*'show','alter','drop','create,'*/'select','update','set','delete','insert','from','values','left','right','inner','exec','where','and','or','order','group','having','limit');
 	/**
 	 * 公有构造函数
 	 *
@@ -16,6 +20,25 @@ class SQL_Join{
 	{
 		
 	}
+	/**
+	 * 根据数组获取SQL语句
+	 *
+	 * @access public
+	 *
+	 * @param array $arr 要操作的数组.
+	 * @param boolen $sort 是否先进行排序.
+	 * @return 返回排序的数组,
+	 */
+	public function getSQL($param,$sort=FALSE)
+	{
+		if($sort)
+		{
+			$param=$this->sortarr($param,self::SQL_KEYS);
+		}
+		
+		return $this->sqlCheck($param);
+	}
+	
 	/**
 	 * 根据SQL关键字拼接语句
 	 *
@@ -30,7 +53,10 @@ class SQL_Join{
 		$result=' ';
 		switch($key)
 		{
-			/*case 'create':
+			/*case 'show':
+				$result.='SHOW '.$this->sqlCheck($value);
+				break;
+			case 'create':
 				$result.='CREATE TABLE '.$this->sqlCheck($value,',');
 				break;
 			case 'alter':
@@ -85,7 +111,7 @@ class SQL_Join{
 				$result.='AND '.$this->sqlCheck($value);
 				break;
 			default:															//默认为是这些关键词 'left','right','inner'
-				$result.=strtoupper($value).' JOIN '.$this->sqlCheck($value,' ON ');
+				$result.=strtoupper($key).' JOIN '.$this->sqlCheck($value,' ON ');
 				break;
 		}
 		
@@ -95,15 +121,15 @@ class SQL_Join{
 	/**
 	 * SQL关键字检测
 	 *
-	 * @access public
+	 * @access private
 	 *
 	 * @param string|array $value 要检查的语句或数组.
 	 * @param string $link 数组之间的连接符.
 	 * @return 返回拼接的语句,
 	 */
-	public function sqlCheck($value,$link=' ')
+	private function sqlCheck($value,$link=' ')
 	{
-		$sqlkey=array('select','from','update','set','delete','insert','values','limit','order','group','having','where','or','and','left','right','inner','exec'/*,'alter','drop','create'*/);
+		
 		$result='';
 		
 		if(is_array($value))
@@ -114,7 +140,7 @@ class SQL_Join{
 				
 				//把关键字转换成小写进行检测
 				$low=strtolower($key);
-				if(in_array($low,$sqlkey,true))
+				if(in_array($low,self::SQL_KEYS,true))
 				{
 					$space.=$this->sqlJoin($low,$v);
 				}else{
@@ -135,7 +161,7 @@ class SQL_Join{
 			}
 			
 		}else{
-			$unsafe=$sqlkey;
+			$unsafe=self::SQL_KEYS;
 			array_push($unsafe,';');                        //替换SQL关键字和其他非法字符，
 			$safe=$this->safeCheck($value,'\'',$unsafe,' ');
 			$safe=$this->safeCheck($value,'"',$unsafe,' ');
@@ -184,4 +210,35 @@ class SQL_Join{
 		
 		return $safe;
 	}
+	/**
+	 * 根据关键字排序，不是在关键字上往后移
+	 *
+	 * @access private
+	 *
+	 * @param array $arr 要排序的数组.
+	 * @param array $keys 关键字数组.
+	 * @return 返回排序的数组,
+	 */
+	private function sortarr($arr,$keys)
+	{
+		$keyarr=$noarr=array();
+		foreach($keys as $key=>$value)
+		{
+			if(isset($arr[$value]))
+			{
+				$keyarr[$value]=$arr[$value];
+			}
+		}
+		
+		foreach($arr as $key=>$value)
+		{
+			if(!in_array($key,$keys))
+			{
+				$noarr[$key]=$value;
+			}
+		}
+		
+		return array_merge($keyarr,$noarr);
+	}
+	
 }
