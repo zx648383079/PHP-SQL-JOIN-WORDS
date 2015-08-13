@@ -87,30 +87,34 @@
 	function sqlCheck($value,$link=' ')
 	{
 		$sqlkey=array('select','from','update','set','delete','insert','values','limit','order','group','having','where','or','and','left','right','inner','exec'/*,'alter','drop','create'*/);
-		$result=' ';
+		$result='';
 		
 		if(is_array($value))
 		{
 			foreach($value as $key=>$v)
 			{
+				$space=' ';
+				
 				//把关键字转换成小写进行检测
 				$low=strtolower($key);
 				if(in_array($low,$sqlkey,true))
 				{
-					$result.=sqlJoin($low,$v);
+					$space.=sqlJoin($low,$v);
 				}else{
 					if(is_numeric($key))
 					{
-						if($result==' ')
+						if(empty($result))
 						{
-							$result.=sqlCheck($v);
+							$space.=sqlCheck($v);
 						}else{
-							$result.=$link.sqlCheck($v);
+							$space.=$link.sqlCheck($v);
 						}
 					}else{
-						$result.=$key.$link.sqlCheck($v);
+						$space.=$key.$link.sqlCheck($v);
 					}
 				}
+				
+				$result.=$space;
 			}
 			
 		}else{

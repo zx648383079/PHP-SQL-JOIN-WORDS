@@ -2,16 +2,21 @@
 	include_once('sql_join.php');
 	
 	$where=array(
-			'select'=>array('zx','z','x'),
-			'from'=>'aa',
+			'select'=>array('id','name','phone','udate'),
+			'from'=>'havana_profile',
 			'where'=>array(
-				'and'=>array('4','=',"'select'"),
-				array('5','like','%3%'),
-				'or'=>array('6','>','7')
+				array('name','like','\'%m%\''),
+				'or'=>array('id','>','76')
 				),
-			'order'=>array('id','DESC'),
-			'limit'=>'1,2'
+			'order'=>array('id','DESC')
 	);
+	$tem1=microtime();
 		
 	$re =sqlCheck($where);     //获取SQL语句
+	
+	$tem2=microtime();
+	
+	
+	
 	echo $re;
+	echo "<br/>用时：".$tem2.'he'.$tem1;
