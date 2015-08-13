@@ -9,7 +9,7 @@ class SQL_Join{
 	/********
 	SQL中的关键字数组
 	*********/
-	const SQL_KEYS=array(/*'show','alter','drop','create,'*/'select','update','set','delete','insert','from','values','left','right','inner','exec','where','and','or','order','group','having','limit');
+	const SQL_KEYS=array(/*'show','alter','drop','create,'*/'select','update','set','delete','insert','from','values','left','right','inner','exec','where','and','or','group','having','order','asc','desc','limit');
 	/**
 	 * 公有构造函数
 	 *
@@ -90,13 +90,13 @@ class SQL_Join{
 				$result.='VALUES '.$this->sqlCheck($value,',');
 				break;
 			case 'limit':
-				$result.='LIMIT '.$this->sqlCheck($value);
+				$result.='LIMIT '.$this->sqlCheck($value,',');
 				break;
 			case 'order':
-				$result.='ORDER BY '.$this->sqlCheck($value);
+				$result.='ORDER BY '.$this->sqlCheck($value,',');
 				break;
 			case 'group':
-				$result.='GROUP BY '.$this->sqlCheck($value);
+				$result.='GROUP BY '.$this->sqlCheck($value,',');
 				break;
 			case 'having':
 				$result.='HAVING '.$this->sqlCheck($value);
@@ -109,6 +109,12 @@ class SQL_Join{
 				break;
 			case 'and':
 				$result.='AND '.$this->sqlCheck($value);
+				break;
+			case 'desc':
+				$result.=$this->sqlCheck($value,',').' DESC';
+				break;
+			case 'asc':
+				$result.=$this->sqlCheck($value,',').' ASC';
 				break;
 			default:															//默认为是这些关键词 'left','right','inner'
 				$result.=strtoupper($key).' JOIN '.$this->sqlCheck($value,' ON ');
