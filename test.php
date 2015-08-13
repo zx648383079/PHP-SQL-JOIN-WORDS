@@ -11,8 +11,11 @@
 			'order'=>array('id','DESC')
 	);
 	$tem1=microtime();
-		
-	$re =sqlCheck($where);     //获取SQL语句
+	
+	
+	$sql =new SQL_Join();    
+	$re=$sql->sqlCheck($where);            //获取SQL语句
+	
 	
 	$tem2=microtime();
 	

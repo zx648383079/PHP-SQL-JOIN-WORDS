@@ -1,20 +1,37 @@
 <?php 
+/**
+* SQL语句的拼接和过滤
+*
+*
+*/
+class SQL_Join{
+	
+	/**
+	 * 公有构造函数
+	 *
+	 * @access public
+	 *
+	 */
+	public function __construct()
+	{
+		
+	}
 	/**
 	 * 根据SQL关键字拼接语句
 	 *
-	 * @access public
+	 * @access private
 	 *
 	 * @param string $key 关键字.
 	 * @param string|array $value 值.
 	 * @return 返回拼接后的SQL语句,
 	 */
-	function sqlJoin($key,$value)
+	private function sqlJoin($key,$value)
 	{
 		$result=' ';
 		switch($key)
 		{
 			/*case 'create':
-				$result.='CREATE TABLE '.sqlCheck($value,',');
+				$result.='CREATE TABLE '.$this->sqlCheck($value,',');
 				break;
 			case 'alter':
 				$result.='ALTER TABLE '.sqlCheck($value,',');
@@ -23,52 +40,52 @@
 				$result.='DROP TABLE '.sqlCheck($value,',');
 				break;*/
 			case 'exec':
-				$result.='EXEC '.sqlCheck($value);
+				$result.='EXEC '.$this->sqlCheck($value);
 				break;
 			case 'select':
-				$result.='SELECT '.sqlCheck($value,',');
+				$result.='SELECT '.$this->sqlCheck($value,',');
 				break;
 			case 'from':
-				$result.='FROM '.sqlCheck($value,',');
+				$result.='FROM '.$this->sqlCheck($value,',');
 				break;
 			case 'update':
-				$result.='UPDATE '.sqlCheck($value,',');
+				$result.='UPDATE '.$this->sqlCheck($value,',');
 				break;
 			case 'set':
-				$result.='SET '.sqlCheck($value,',');
+				$result.='SET '.$this->sqlCheck($value,',');
 				break;
 			case 'delete':
-				$result.='DELETE FROM '.sqlCheck($value,',');
+				$result.='DELETE FROM '.$this->sqlCheck($value,',');
 				break;
 			case 'insert':
-				$result.='INSERT INTO '.sqlCheck($value);
+				$result.='INSERT INTO '.$this->sqlCheck($value);
 				break;
 			case 'values':
-				$result.='VALUES '.sqlCheck($value,',');
+				$result.='VALUES '.$this->sqlCheck($value,',');
 				break;
 			case 'limit':
-				$result.='LIMIT '.sqlCheck($value);
+				$result.='LIMIT '.$this->sqlCheck($value);
 				break;
 			case 'order':
-				$result.='ORDER BY '.sqlCheck($value);
+				$result.='ORDER BY '.$this->sqlCheck($value);
 				break;
 			case 'group':
-				$result.='GROUP BY '.sqlCheck($value);
+				$result.='GROUP BY '.$this->sqlCheck($value);
 				break;
 			case 'having':
-				$result.='HAVING '.sqlCheck($value);
+				$result.='HAVING '.$this->sqlCheck($value);
 				break;
 			case 'where':
-				$result.='WHERE '.sqlCheck($value,' AND ');
+				$result.='WHERE '.$this->sqlCheck($value,' AND ');
 				break;
 			case 'or':
-				$result.='OR '.sqlCheck($value);
+				$result.='OR '.$this->sqlCheck($value);
 				break;
 			case 'and':
-				$result.='AND '.sqlCheck($value);
+				$result.='AND '.$this->sqlCheck($value);
 				break;
 			default:															//默认为是这些关键词 'left','right','inner'
-				$result.=strtoupper($value).' JOIN '.sqlCheck($value,' ON ');
+				$result.=strtoupper($value).' JOIN '.$this->sqlCheck($value,' ON ');
 				break;
 		}
 		
@@ -84,7 +101,7 @@
 	 * @param string $link 数组之间的连接符.
 	 * @return 返回拼接的语句,
 	 */
-	function sqlCheck($value,$link=' ')
+	public function sqlCheck($value,$link=' ')
 	{
 		$sqlkey=array('select','from','update','set','delete','insert','values','limit','order','group','having','where','or','and','left','right','inner','exec'/*,'alter','drop','create'*/);
 		$result='';
@@ -99,18 +116,18 @@
 				$low=strtolower($key);
 				if(in_array($low,$sqlkey,true))
 				{
-					$space.=sqlJoin($low,$v);
+					$space.=$this->sqlJoin($low,$v);
 				}else{
 					if(is_numeric($key))
 					{
 						if(empty($result))
 						{
-							$space.=sqlCheck($v);
+							$space.=$this->sqlCheck($v);
 						}else{
-							$space.=$link.sqlCheck($v);
+							$space.=$link.$this->sqlCheck($v);
 						}
 					}else{
-						$space.=$key.$link.sqlCheck($v);
+						$space.=$key.$link.$this->sqlCheck($v);
 					}
 				}
 				
@@ -120,8 +137,8 @@
 		}else{
 			$unsafe=$sqlkey;
 			array_push($unsafe,';');                        //替换SQL关键字和其他非法字符，
-			$safe=safeCheck($value,'\'',$unsafe,' ');
-			$safe=safeCheck($value,'"',$unsafe,' ');
+			$safe=$this->safeCheck($value,'\'',$unsafe,' ');
+			$safe=$this->safeCheck($value,'"',$unsafe,' ');
 			$result.=$safe;
 		}
 		
@@ -135,7 +152,7 @@
 	 /**
 	 * 检查是否是字符串语句
 	 *
-	 * @access public
+	 * @access private
 	 *
 	 * @param string $unsafe 要检查的语句.
 	 * @param string $scope 排除语句的标志.
@@ -143,7 +160,7 @@
 	 * @param string|array $enresplace 替换的字符或数组.
 	 * @return 返回完成检查的语句,
 	 */
-	function safeCheck($unsafe,$scope,$find,$enresplace)
+	private function safeCheck($unsafe,$scope,$find,$enresplace)
 	{
 		$safe='';
 		$arr=explode($scope,$unsafe);
@@ -167,3 +184,4 @@
 		
 		return $safe;
 	}
+}

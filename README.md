@@ -19,7 +19,8 @@
 			'limit'=>'1,2'
 		);
 		
-		$re =sqlCheck($where);     //获取SQL语句
+		$sql =new SQL_Join();    
+		echo $sql->sqlCheck($where);            //获取SQL语句
 		
 		
 已知问题
