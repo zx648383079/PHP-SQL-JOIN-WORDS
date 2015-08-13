@@ -67,7 +67,7 @@
 			case 'and':
 				$result.='AND '.sqlCheck($value);
 				break;
-			default:
+			default:															//默认为是这些关键词 'left','right','inner'
 				$result.=strtoupper($value).' JOIN '.sqlCheck($value,' ON ');
 				break;
 		}
