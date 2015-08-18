@@ -4,21 +4,25 @@
 *
 *
 */
-class SQL_Join{
+class SqlHelper{
 	
 	/********
 	SQL中的关键字数组
 	*********/
 	const SQL_KEYS=array(/*'show','alter','drop','create,'*/'select','update','set','delete','insert','from','values','left','right','inner','exec','where','and','or','group','having','order','asc','desc','limit');
+	
+	private $prefix=NULL;
 	/**
 	 * 公有构造函数
 	 *
 	 * @access public
 	 *
+	 * @param boolen $sort 是否先进行排序.
+	 *
 	 */
-	public function __construct()
+	public function __construct($prefix=NULL)
 	{
-		
+		$this->prefix=$prefix;
 	}
 	/**
 	 * 根据数组获取SQL语句
@@ -72,7 +76,7 @@ class SQL_Join{
 				$result.='SELECT '.$this->sqlCheck($value,',');
 				break;
 			case 'from':
-				$result.='FROM '.$this->sqlCheck($value,',');
+				$result.='FROM '.$this->sqlCheck($value,',',$this->prefix);
 				break;
 			case 'update':
 				$result.='UPDATE '.$this->sqlCheck($value,',');
@@ -117,7 +121,7 @@ class SQL_Join{
 				$result.=$this->sqlCheck($value,',').' ASC';
 				break;
 			default:															//默认为是这些关键词 'left','right','inner'
-				$result.=strtoupper($key).' JOIN '.$this->sqlCheck($value,' ON ');
+				$result.=strtoupper($key).' JOIN '.$this->sqlCheck($value,' ON ',$this->prefix);
 				break;
 		}
 		
@@ -133,7 +137,7 @@ class SQL_Join{
 	 * @param string $link 数组之间的连接符.
 	 * @return 返回拼接的语句,
 	 */
-	private function sqlCheck($value,$link=' ')
+	private function sqlCheck($value,$link=' ',$pre=null,$end=null)
 	{
 		
 		$result='';
@@ -154,12 +158,12 @@ class SQL_Join{
 					{
 						if(empty($result))
 						{
-							$space.=$this->sqlCheck($v);
+							$space.=$this->sqlCheck($v,' ',$pre,$end);
 						}else{
 							$space.=$link.$this->sqlCheck($v);
 						}
 					}else{
-						$space.=$key.$link.$this->sqlCheck($v);
+						$space.=$pre.$key.$end.$link.$this->sqlCheck($v);
 					}
 				}
 				
@@ -171,7 +175,12 @@ class SQL_Join{
 			array_push($unsafe,';');                        //替换SQL关键字和其他非法字符，
 			$safe=$this->safeCheck($value,'\'',$unsafe,' ');
 			$safe=$this->safeCheck($value,'"',$unsafe,' ');
-			$result.=$safe;
+			if(strpos($safe,'(')!==FALSE)                      //验证是表名还是其他
+			{
+				$result.=$safe;
+			}else{
+				$result.=$pre.$safe.$end;
+			}
 		}
 		
 		$result=preg_replace('/\s+/', ' ', $result);
