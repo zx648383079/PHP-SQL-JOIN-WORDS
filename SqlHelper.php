@@ -150,9 +150,10 @@ class SqlHelper{
 				
 				//把关键字转换成小写进行检测
 				$low=strtolower($key);
-				if(in_array($low,self::SQL_KEYS,true))
+				$lowkey=str_replace('`','',$low);                   //解决重关键字冲突关键
+				if(in_array($lowkey,self::SQL_KEYS,TRUE))
 				{
-					$space.=$this->sqlJoin($low,$v);
+					$space.=$this->sqlJoin($lowkey,$v);
 				}else{
 					if(is_numeric($key))
 					{

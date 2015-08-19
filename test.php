@@ -24,7 +24,7 @@
 			),
 			'from'=>'user u',
 			'left'=>array('profile p'=>'u.id = p.uid'),
-			'left'=>array(
+			'left`'=>array(
 				'(',
 				'select'=>array(
 					'c.uid, COUNT(c.id) AS pnumber, MIN(c.cdate) AS jdate'
