@@ -9,7 +9,7 @@ class SqlHelper{
 	/********
 	SQL中的关键字数组
 	*********/
-	const SQL_KEYS=array(/*'show','alter','drop','create,'*/'select','update','set','delete','insert','from','values','left','right','inner','exec','where','and','or','group','having','order','asc','desc','limit');
+	const SQL_KEYS=array(/*'show','alter','drop','create,'*/'select','update','set','delete','insert','from','values','left','right','inner','exec','where','and','or','between','group','having','order','asc','desc','limit');
 	
 	private $prefix=NULL;
 	/**
@@ -113,6 +113,9 @@ class SqlHelper{
 				break;
 			case 'and':
 				$result.='AND '.$this->sqlCheck($value);
+				break;
+			case 'between':
+				$result.='BETWEEN '.$this->sqlCheck($value,' AND ');
 				break;
 			case 'desc':
 				$result.=$this->sqlCheck($value,',').' DESC';
